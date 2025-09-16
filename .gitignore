@@ -1,1 +1,10 @@
 lensvault
+
+# Ignore all Go binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
