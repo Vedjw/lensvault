@@ -1,30 +1,24 @@
 package main
 
 import (
-	"html/template"
-	"os"
+	"errors"
+	"fmt"
 )
 
-type User struct {
-	Name string
-	Bio  string
-	Age  int
+var errVar = errors.New("not found")
+
+func A() error {
+	return errVar
+}
+
+func B() error {
+	err := A()
+
+	return fmt.Errorf("B: %w", err)
 }
 
 func main() {
-	t, err := template.ParseFiles("hello.gohtml")
-	if err != nil {
-		panic(err)
-	}
+	err := B()
 
-	user := User{
-		Name: "Vjw",
-		Bio:  `<script>alert("Haha, you have been h4x0r3d!");</script>`,
-		Age:  123,
-	}
-
-	err = t.Execute(os.Stdout, user)
-	if err != nil {
-		panic(err)
-	}
+	fmt.Print(err)
 }

@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"path/filepath"
 
 	"github.com/Vedjw/lensvault/controllers"
+	"github.com/Vedjw/lensvault/templates"
 	"github.com/Vedjw/lensvault/views"
 	"github.com/go-chi/chi"
 )
@@ -13,23 +13,14 @@ import (
 func main() {
 	r := chi.NewRouter()
 
-	tpl, err := views.ParseTpl(filepath.Join("templates", "home.gohtml"))
-	if err != nil {
-		panic(err)
-	}
-	r.Get("/", controllers.StaticHandler(tpl))
+	r.Get("/", controllers.StaticHandler(
+		views.Must(views.ParseTpl(templates.FS, "home.gohtml"))))
 
-	tpl, err = views.ParseTpl(filepath.Join("templates", "contact.gohtml"))
-	if err != nil {
-		panic(err)
-	}
-	r.Get("/contact", controllers.StaticHandler(tpl))
+	r.Get("/contact", controllers.StaticHandler(
+		views.Must(views.ParseTpl(templates.FS, "contact.gohtml"))))
 
-	tpl, err = views.ParseTpl(filepath.Join("templates", "faq.gohtml"))
-	if err != nil {
-		panic(err)
-	}
-	r.Get("/faq", controllers.StaticHandler(tpl))
+	r.Get("/faq", controllers.StaticHandler(
+		views.Must(views.ParseTpl(templates.FS, "faq.gohtml"))))
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)

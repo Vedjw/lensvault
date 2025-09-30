@@ -3,6 +3,7 @@ package views
 import (
 	"fmt"
 	"html/template"
+	"io/fs"
 	"log"
 	"net/http"
 )
@@ -11,17 +12,25 @@ type Template struct {
 	htmlTpl *template.Template
 }
 
-func ParseTpl(filepath string) (Template, error) {
-	tpl, err := template.ParseFiles(filepath)
+// ^Only use this func in main, generally
+func Must(t *Template, err error) *Template {
 	if err != nil {
-		return Template{}, fmt.Errorf("parsing template: %w", err)
+		panic(err)
 	}
-	return Template{
+	return t
+}
+
+func ParseTpl(fs fs.FS, filepath string) (*Template, error) {
+	tpl, err := template.ParseFS(fs, filepath)
+	if err != nil {
+		return &Template{}, fmt.Errorf("parsing template: %w", err)
+	}
+	return &Template{
 		htmlTpl: tpl,
 	}, nil
 }
 
-func (t Template) Execute(w http.ResponseWriter, data interface{}) {
+func (t *Template) Execute(w http.ResponseWriter, data interface{}) {
 	w.Header().Set("Content-Type", "text/html")
 	err := t.htmlTpl.Execute(w, nil)
 	if err != nil {
