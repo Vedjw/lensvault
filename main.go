@@ -5,22 +5,17 @@ import (
 	"net/http"
 
 	"github.com/Vedjw/lensvault/controllers"
-	"github.com/Vedjw/lensvault/templates"
-	"github.com/Vedjw/lensvault/views"
 	"github.com/go-chi/chi"
 )
 
 func main() {
 	r := chi.NewRouter()
 
-	r.Get("/", controllers.StaticHandler(
-		views.Must(views.ParseTpl(templates.FS, "home.gohtml"))))
+	r.Get("/", controllers.StaticHandler("home.gohtml", "tailwind.gohtml"))
 
-	r.Get("/contact", controllers.StaticHandler(
-		views.Must(views.ParseTpl(templates.FS, "contact.gohtml"))))
+	r.Get("/contact", controllers.StaticHandler("contact.gohtml", "tailwind.gohtml"))
 
-	r.Get("/faq", controllers.FAQ(
-		views.Must(views.ParseTpl(templates.FS, "faq.gohtml"))))
+	r.Get("/faq", controllers.FAQ("faq.gohtml", "tailwind.gohtml"))
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)

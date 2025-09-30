@@ -4,16 +4,19 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/Vedjw/lensvault/templates"
 	"github.com/Vedjw/lensvault/views"
 )
 
-func StaticHandler(tpl *views.Template) http.HandlerFunc {
+func StaticHandler(pattern ...string) http.HandlerFunc {
+	tpl := views.Must(views.ParseTpl(templates.FS, pattern...))
 	return func(w http.ResponseWriter, r *http.Request) {
 		tpl.Execute(w, nil)
 	}
 }
 
-func FAQ(tpl *views.Template) http.HandlerFunc {
+func FAQ(pattern ...string) http.HandlerFunc {
+	tpl := views.Must(views.ParseTpl(templates.FS, pattern...))
 	questions := []struct {
 		Q string
 		A template.HTML
