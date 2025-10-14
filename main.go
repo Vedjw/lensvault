@@ -5,7 +5,9 @@ import (
 	"net/http"
 
 	"github.com/Vedjw/lensvault/controllers"
-	"github.com/go-chi/chi"
+	"github.com/Vedjw/lensvault/templates"
+	"github.com/Vedjw/lensvault/views"
+	"github.com/go-chi/chi/v5"
 )
 
 func main() {
@@ -16,6 +18,14 @@ func main() {
 	r.Get("/contact", controllers.StaticHandler("contact.gohtml", "tailwind.gohtml"))
 
 	r.Get("/faq", controllers.FAQ("faq.gohtml", "tailwind.gohtml"))
+
+	usersC := controllers.Users{}
+	usersC.Templates.New = views.Must(views.ParseFS(
+		templates.FS,
+		"signup.gohtml", "tailwind.gohtml",
+	))
+	r.Get("/signup", usersC.New)
+	r.Post("/users", usersC.Create)
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)

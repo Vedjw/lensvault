@@ -9,14 +9,14 @@ import (
 )
 
 func StaticHandler(pattern ...string) http.HandlerFunc {
-	tpl := views.Must(views.ParseTpl(templates.FS, pattern...))
+	tpl := views.Must(views.ParseFS(templates.FS, pattern...))
 	return func(w http.ResponseWriter, r *http.Request) {
 		tpl.Execute(w, nil)
 	}
 }
 
 func FAQ(pattern ...string) http.HandlerFunc {
-	tpl := views.Must(views.ParseTpl(templates.FS, pattern...))
+	tpl := views.Must(views.ParseFS(templates.FS, pattern...))
 	questions := []struct {
 		Q string
 		A template.HTML
@@ -33,6 +33,10 @@ func FAQ(pattern ...string) http.HandlerFunc {
 		{
 			Q: "How do I contact support?",
 			A: `Email us - <a href="mailto:support@lensvault.com">support@lensvault.com</a>`,
+		},
+		{
+			Q: "Where is your office?",
+			A: "Our entire team is remote!",
 		},
 	}
 
