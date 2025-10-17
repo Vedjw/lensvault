@@ -1,24 +1,47 @@
 package main
 
 import (
-	"errors"
+	"database/sql"
 	"fmt"
+
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-var errVar = errors.New("not found")
-
-func A() error {
-	return errVar
+type PostgresConfig struct {
+	Host     string
+	Port     string
+	User     string
+	Password string
+	Database string
+	SSLMode  string
 }
 
-func B() error {
-	err := A()
-
-	return fmt.Errorf("B: %w", err)
+func (cfg PostgresConfig) ToString() string {
+	return fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Database, cfg.SSLMode,
+	)
 }
 
 func main() {
-	err := B()
+	cfg := PostgresConfig{
+		Host:     "localhost",
+		Port:     "5432",
+		User:     "paul",
+		Password: "dune",
+		Database: "lensvault",
+		SSLMode:  "disable",
+	}
 
-	fmt.Print(err)
+	db, err := sql.Open("pgx", cfg.ToString())
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Connected to DB")
 }
