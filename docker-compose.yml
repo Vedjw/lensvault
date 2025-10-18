@@ -8,12 +8,3 @@ services:
       POSTGRES_DB: lensvault
     ports:
       - 5432:5432 # format here is "port on our machine":"port on container"
-
-  # Adminer provides a web UI to connect to databases
-  adminer:
-    image: adminer
-    restart: always
-    environment:
-      ADMINER_DESIGN: dracula
-    ports:
-      - 3333:80

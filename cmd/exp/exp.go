@@ -44,4 +44,38 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("Connected to DB")
+
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS users (
+		id SERIAL PRIMARY KEY,
+		name TEXT,
+		email TEXT NOT NULL
+	  );
+	
+	  CREATE TABLE IF NOT EXISTS orders (
+		id SERIAL PRIMARY KEY,
+		user_id INT NOT NULL,
+		amount INT,
+		description TEXT
+	  );`)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Tables created.")
+
+	name := "',''); DROP TABLE users; --"
+	email := "new@smith.io"
+	// query := fmt.Sprintf(`
+	//   INSERT INTO users (name, email)
+	//   VALUES ('%s', '%s');`, name, email)
+	// fmt.Printf("Executing: %s\n", query)
+	// _, err = db.Exec(query)
+	row := db.QueryRow(`
+		INSERT INTO users (name, email)
+		VALUES ($1, $2) RETURNING id;`, name, email)
+	var id int
+	err = row.Scan(&id)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("User created. id =", id)
 }
