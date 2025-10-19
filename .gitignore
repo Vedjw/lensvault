@@ -8,3 +8,4 @@ lensvault
 *.dylib
 *.test
 *.out
+.env

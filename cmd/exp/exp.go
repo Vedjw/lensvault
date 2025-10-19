@@ -45,18 +45,22 @@ func main() {
 	}
 	fmt.Println("Connected to DB")
 
-	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS users (
-		id SERIAL PRIMARY KEY,
-		name TEXT,
-		email TEXT NOT NULL
-	  );
+	_, err = db.Exec(`
+	CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+	CREATE TABLE IF NOT EXISTS users (
+  	pk SERIAL PRIMARY KEY,
+  	id UUID DEFAULT gen_random_uuid() NOT NULL,
+  	name TEXT,
+  	email TEXT NOT NULL
+	);
 	
 	  CREATE TABLE IF NOT EXISTS orders (
 		id SERIAL PRIMARY KEY,
 		user_id INT NOT NULL,
 		amount INT,
 		description TEXT
-	  );`)
+	);`)
 	if err != nil {
 		panic(err)
 	}
@@ -71,11 +75,12 @@ func main() {
 	// _, err = db.Exec(query)
 	row := db.QueryRow(`
 		INSERT INTO users (name, email)
-		VALUES ($1, $2) RETURNING id;`, name, email)
-	var id int
-	err = row.Scan(&id)
+		VALUES ($1, $2) RETURNING pk, id;`, name, email)
+	var pk int
+	var uuid string
+	err = row.Scan(&pk, &uuid)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("User created. id =", id)
+	fmt.Printf("User created. at = %d with id = %s", pk, uuid)
 }
