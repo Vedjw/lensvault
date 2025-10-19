@@ -74,7 +74,7 @@ func main() {
 	}
 	pepper := getEnvField(&envdata, "PASSWORD_PEPPER")
 	if pepper == "nf" {
-		fmt.Println("Environment variable not found")
+		panic("Environment variable not found")
 	}
 
 	var currHashData *currHash
