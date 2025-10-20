@@ -1,9 +1,9 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 
+	"github.com/Vedjw/lensvault/models"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
@@ -24,16 +24,8 @@ func (cfg PostgresConfig) ToString() string {
 }
 
 func main() {
-	cfg := PostgresConfig{
-		Host:     "localhost",
-		Port:     "5432",
-		User:     "paul",
-		Password: "dune",
-		Database: "lensvault",
-		SSLMode:  "disable",
-	}
-
-	db, err := sql.Open("pgx", cfg.ToString())
+	config := models.DefaultPostgresConfig()
+	db, err := models.Open(config)
 	if err != nil {
 		panic(err)
 	}
@@ -45,42 +37,49 @@ func main() {
 	}
 	fmt.Println("Connected to DB")
 
-	_, err = db.Exec(`
-	CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-
-	CREATE TABLE IF NOT EXISTS users (
-  	pk SERIAL PRIMARY KEY,
-  	id UUID DEFAULT gen_random_uuid() NOT NULL,
-  	name TEXT,
-  	email TEXT NOT NULL
-	);
-	
-	  CREATE TABLE IF NOT EXISTS orders (
-		id SERIAL PRIMARY KEY,
-		user_id INT NOT NULL,
-		amount INT,
-		description TEXT
-	);`)
+	us := models.UserService{
+		DB: db,
+	}
+	nu := &models.NewUser{
+		FirstName: "ved",
+		LastName:  "W",
+		Age:       23,
+		Email:     "xyz@io.com",
+		Password:  "asdf",
+	}
+	user, err := us.Create(nu)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Tables created.")
+	fmt.Println(user)
+	// _, err = db.Exec(`
+	// CREATE TABLE IF NOT EXISTS users (
+	// 	pk SERIAL PRIMARY KEY,
+	// 	id UUID DEFAULT uuidv7() NOT NULL,
+	// 	name TEXT NOT NULL,
+	// 	email TEXT NOT NULL UNIQUE,
+	// 	password_hash TEXT NOT NULL
+	// );`)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Println("Tables created.")
 
-	name := "',''); DROP TABLE users; --"
-	email := "new@smith.io"
-	// query := fmt.Sprintf(`
-	//   INSERT INTO users (name, email)
-	//   VALUES ('%s', '%s');`, name, email)
-	// fmt.Printf("Executing: %s\n", query)
-	// _, err = db.Exec(query)
-	row := db.QueryRow(`
-		INSERT INTO users (name, email)
-		VALUES ($1, $2) RETURNING pk, id;`, name, email)
-	var pk int
-	var uuid string
-	err = row.Scan(&pk, &uuid)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("User created. at = %d with id = %s", pk, uuid)
+	// name := "',''); DROP TABLE users; --"
+	// email := "new@smith.io"
+	// // query := fmt.Sprintf(`
+	// //   INSERT INTO users (name, email)
+	// //   VALUES ('%s', '%s');`, name, email)
+	// // fmt.Printf("Executing: %s\n", query)
+	// // _, err = db.Exec(query)
+	// row := db.QueryRow(`
+	// 	INSERT INTO users (name, email, password_hash)
+	// 	VALUES ($1, $2, $3) RETURNING pk, id;`, name, email, "yolo")
+	// var pk int
+	// var uuid string
+	// err = row.Scan(&pk, &uuid)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Printf("User created. at = %d with id = %s", pk, uuid)
 }

@@ -1,10 +1,48 @@
 {{template "header"}}
 <div class="py-12 flex justify-center">
-  <div class="px-8 py-8 bg-white rounded shadow">
+  <div class="px-8 py-8 bg-white rounded shadow w-[520px] mx-auto">
     <h1 class="pt-4 pb-8 text-center text-3xl font-bold text-gray-900">
       Start sharing your photos today!
     </h1>
     <form action="/signup" method="post">
+      <div class="py-2">
+        <label for="first_name" class="text-sm font-semibold text-800">
+          First Name
+        </label>
+        <input
+          name="first_name"
+          id="first_name"
+          type="text"
+          placeholder="First name"
+          required
+          class="w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-800 rounded"
+          autofocus
+        />
+      </div>
+      <div class="py-2">
+        <label for="last_name" class="text-sm font-semibold text-800">
+          Last Name
+        </label>
+        <input
+          name="last_name"
+          id="last_name"
+          type="text"
+          placeholder="Last name"
+          required
+          class="w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-800 rounded"
+        />
+      </div>
+      <div class="py-2">
+        <label for="age" class="text-sm font-semibold text-800"> Age </label>
+        <input
+          name="age"
+          id="age"
+          type="number"
+          placeholder="Age"
+          required
+          class="w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-800 rounded"
+        />
+      </div>
       <div class="py-2">
         <label for="email" class="text-sm font-semibold text-gray-800">
           Email Address
@@ -17,8 +55,6 @@
           required
           autocomplete="email"
           class="w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-800 rounded"
-          value="{{.Email}}"
-          {{if not .Email}}autofocus{{end}}
         />
       </div>
       <div class="py-2">
@@ -32,7 +68,6 @@
           placeholder="Password"
           required
           class="w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-800 rounded"
-          {{if .Email}}autofocus{{end}}
         />
       </div>
       <div class="py-4">

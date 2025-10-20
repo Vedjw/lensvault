@@ -53,7 +53,7 @@ func hashNewPassword(pep string) *currHash {
 	}
 }
 
-func comparepassword(chd *currHash, pep string) {
+func comparePassword(chd *currHash, pep string) {
 	var passwordPlain string
 	fmt.Println("Enter Your Password:")
 	fmt.Scan(&passwordPlain)
@@ -90,7 +90,7 @@ func main() {
 				fmt.Printf("Your Password: %s, Hash generated: %s\n", currHashData.password, currHashData.hash)
 			}
 		case "compare":
-			comparepassword(currHashData, pepper)
+			comparePassword(currHashData, pepper)
 		case "quit":
 			fmt.Println("Come back again")
 			return
