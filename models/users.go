@@ -68,10 +68,11 @@ func (us UserService) Authenticate(email, password string) (*User, error) {
   		FROM users WHERE email=$1`,
 		email,
 	)
-	err := row.Scan(&user.PK, &user.ID, &user.FirstName, &user.PasswordHash)
+	err := row.Scan(&user.PK, &user.ID, &user.FirstName, &user.LastName, &user.Age, &user.PasswordHash)
 	if err != nil {
 		return nil, fmt.Errorf("authenticate: %w", err)
 	}
+
 	password = password + "-" + "dvorak"
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
 	if err != nil {
