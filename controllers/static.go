@@ -11,7 +11,7 @@ import (
 func StaticHandler(pattern ...string) http.HandlerFunc {
 	tpl := views.Must(views.ParseFS(templates.FS, pattern...))
 	return func(w http.ResponseWriter, r *http.Request) {
-		tpl.Execute(w, nil)
+		tpl.Execute(w, r, nil)
 	}
 }
 
@@ -41,6 +41,6 @@ func FAQ(pattern ...string) http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		tpl.Execute(w, questions)
+		tpl.Execute(w, r, questions)
 	}
 }

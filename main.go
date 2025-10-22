@@ -9,6 +9,7 @@ import (
 	"github.com/Vedjw/lensvault/templates"
 	"github.com/Vedjw/lensvault/views"
 	"github.com/go-chi/chi/v5"
+	"github.com/gorilla/csrf"
 )
 
 func main() {
@@ -49,6 +50,14 @@ func main() {
 		http.Error(w, "Page not found", http.StatusNotFound)
 	})
 
+	csrfKey := "gFvi45R4fy5xNBlnEeZtQbfAVCYEIAUX"
+	csrfMw := csrf.Protect(
+		[]byte(csrfKey),
+		//TODO: fix this befor deployment
+		csrf.Secure(false),
+		csrf.TrustedOrigins([]string{"localhost:3000"}),
+	)
+
 	fmt.Println("Starting Server on :3000")
-	http.ListenAndServe(":3000", r)
+	http.ListenAndServe(":3000", csrfMw(r))
 }

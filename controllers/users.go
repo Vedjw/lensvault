@@ -22,7 +22,7 @@ func (u Users) New(w http.ResponseWriter, r *http.Request) {
 	// 	Email string
 	// }
 	// data.Email = r.FormValue("email")
-	u.Templates.NewUser.Execute(w, nil)
+	u.Templates.NewUser.Execute(w, r, nil)
 }
 
 func (u Users) Create(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +54,7 @@ func (u Users) Signin(w http.ResponseWriter, r *http.Request) {
 		Email string
 	}
 	data.Email = r.FormValue("email")
-	u.Templates.Signin.Execute(w, data)
+	u.Templates.Signin.Execute(w, r, data)
 }
 
 func (u Users) ProcessSignIn(w http.ResponseWriter, r *http.Request) {
