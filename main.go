@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/Vedjw/lensvault/controllers"
 	"github.com/Vedjw/lensvault/models"
@@ -11,6 +12,15 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/csrf"
 )
+
+func logMw(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+		next.ServeHTTP(w, r)
+		elapsed := time.Since(start)
+		fmt.Printf("%s %s %v\n", r.Method, r.RequestURI, elapsed)
+	})
+}
 
 func main() {
 	r := chi.NewRouter()
@@ -45,6 +55,7 @@ func main() {
 	r.Post("/signup", usersC.Create)
 	r.Get("/signin", usersC.Signin)
 	r.Post("/signin", usersC.ProcessSignIn)
+	r.Get("/users/me", usersC.CurrentUser)
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)
@@ -59,5 +70,5 @@ func main() {
 	)
 
 	fmt.Println("Starting Server on :3000")
-	http.ListenAndServe(":3000", csrfMw(r))
+	http.ListenAndServe(":3000", logMw(csrfMw(r)))
 }

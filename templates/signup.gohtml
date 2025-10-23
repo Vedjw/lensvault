@@ -5,6 +5,9 @@
       Start sharing your photos today!
     </h1>
     <form action="/signup" method="post">
+      <div class="hidden">
+        {{ csrfField }}
+      </div>
       <div class="py-2">
         <label for="first_name" class="text-sm font-semibold text-800">
           First Name

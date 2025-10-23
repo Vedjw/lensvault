@@ -31,8 +31,8 @@ type NewUser struct {
 }
 
 func (us UserService) Create(nu *NewUser) (*User, error) {
-	//TODO: replace hardcoded pepper with os.GetEnv()
 	nu.Email = strings.ToLower(nu.Email)
+	//TODO: replace hardcoded pepper with os.GetEnv()
 	password := nu.Password + "-" + "dvorak"
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
