@@ -47,11 +47,7 @@ func (us UserService) Create(nu *NewUser) (*User, error) {
 		Email:        nu.Email,
 		PasswordHash: passwordHash,
 	}
-	row := us.DB.QueryRow(`
-		INSERT INTO users (first_name, last_name, age, email, password_hash)
-		VALUES ($1, $2, $3, $4, $5) RETURNING pk, id;`,
-		nu.FirstName, nu.LastName, nu.Age, nu.Email, passwordHash)
-	err = row.Scan(&user.PK, &user.ID)
+	err = us.createUser(user)
 	if err != nil {
 		return nil, fmt.Errorf("models: create user: %w", err)
 	}
@@ -63,12 +59,7 @@ func (us UserService) Authenticate(email, password string) (*User, error) {
 	user := &User{
 		Email: email,
 	}
-	row := us.DB.QueryRow(`
-  		SELECT pk, id, first_name, last_name, age, password_hash
-  		FROM users WHERE email=$1`,
-		email,
-	)
-	err := row.Scan(&user.PK, &user.ID, &user.FirstName, &user.LastName, &user.Age, &user.PasswordHash)
+	err := us.getUser(user)
 	if err != nil {
 		return nil, fmt.Errorf("authenticate: %w", err)
 	}
@@ -79,4 +70,22 @@ func (us UserService) Authenticate(email, password string) (*User, error) {
 		return nil, fmt.Errorf("authenticate: %w", err)
 	}
 	return user, nil
+}
+
+func (us *UserService) createUser(u *User) error {
+	row := us.DB.QueryRow(`
+	INSERT INTO users (first_name, last_name, age, email, password_hash)
+	VALUES ($1, $2, $3, $4, $5) RETURNING pk, id;`,
+		u.FirstName, u.LastName, u.Age, u.Email, u.PasswordHash)
+	err := row.Scan(&u.PK, &u.ID)
+	return err
+}
+
+func (us *UserService) getUser(u *User) error {
+	row := us.DB.QueryRow(`
+	SELECT pk, id, first_name, last_name, age, password_hash
+	FROM users WHERE email=$1`,
+		u.Email)
+	err := row.Scan(&u.PK, &u.ID, &u.FirstName, &u.LastName, &u.Age, &u.PasswordHash)
+	return err
 }
