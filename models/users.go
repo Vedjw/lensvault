@@ -74,8 +74,8 @@ func (us UserService) Authenticate(email, password string) (*User, error) {
 
 func (us *UserService) createUser(u *User) error {
 	row := us.DB.QueryRow(`
-	INSERT INTO users (first_name, last_name, age, email, password_hash)
-	VALUES ($1, $2, $3, $4, $5) RETURNING pk, id;`,
+		INSERT INTO users (first_name, last_name, age, email, password_hash)
+		VALUES ($1, $2, $3, $4, $5) RETURNING pk, id;`,
 		u.FirstName, u.LastName, u.Age, u.Email, u.PasswordHash)
 	err := row.Scan(&u.PK, &u.ID)
 	return err
@@ -83,8 +83,8 @@ func (us *UserService) createUser(u *User) error {
 
 func (us *UserService) getUser(u *User) error {
 	row := us.DB.QueryRow(`
-	SELECT pk, id, first_name, last_name, age, password_hash
-	FROM users WHERE email=$1`,
+		SELECT pk, id, first_name, last_name, age, password_hash
+		FROM users WHERE email=$1`,
 		u.Email)
 	err := row.Scan(&u.PK, &u.ID, &u.FirstName, &u.LastName, &u.Age, &u.PasswordHash)
 	return err

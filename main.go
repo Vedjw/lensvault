@@ -18,7 +18,17 @@ func logMw(next http.Handler) http.Handler {
 		start := time.Now()
 		next.ServeHTTP(w, r)
 		elapsed := time.Since(start)
-		fmt.Printf("%s %s %v\n", r.Method, r.RequestURI, elapsed)
+		method := r.Method
+		switch method {
+		case "GET":
+			fmt.Printf("%s      %s   %v\n", r.Method, r.RequestURI, elapsed)
+		case "POST":
+			fmt.Printf("%s     %s   %v\n", r.Method, r.RequestURI, elapsed)
+		case "DELETE":
+			fmt.Printf("%s  %s   %v\n", r.Method, r.RequestURI, elapsed)
+		case "PUT":
+			fmt.Printf("%s      %s   %v\n", r.Method, r.RequestURI, elapsed)
+		}
 	})
 }
 
@@ -60,6 +70,7 @@ func main() {
 	r.Post("/signup", usersC.Create)
 	r.Get("/signin", usersC.Signin)
 	r.Post("/signin", usersC.ProcessSignIn)
+	r.Post("/signout", usersC.ProcessSignOut)
 	r.Get("/users/me", usersC.CurrentUser)
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
